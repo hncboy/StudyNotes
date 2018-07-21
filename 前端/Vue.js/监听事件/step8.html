@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>事件修饰符 阻止提交 .prevent</title>
+		<script src="../vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="div1">
+			<a href="http://hncboy.top" @click="jump">正常的链接</a><br>
+			<a href="http://hncboy.top" @click.prevent="jump">prevent jump()之后的链接</a><br>
+			<a href="http://hncboy.top" @click.prevent>纯prevent之后的链接</a><br><br>
+
+			<form @submit="jump" action="http://hncboy.top">
+				<input type="submit" value="正常的form">
+			</form>
+			<form @submit.prevent="jump" action="http://hncboy.top">
+				<input type="submit" value="prevent jump()之后的form">
+			</form>
+			<form @submit.prevent action="http://hncboy.top">
+				<input type="submit" value="纯prevent之后的form">
+			</form>
+		</div>
+
+		<script>
+			new Vue({
+				el: '#div1',
+				data: {
+
+				},
+				methods: {
+					jump: function() {
+						alert("jump()函数被调用");
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>
