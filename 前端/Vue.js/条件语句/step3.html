@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>v-else-if</title>
+		<script src="../vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="div1">
+			<input type="button" value="查成绩" @click="search">
+			<div v-if="score==100">学神</div>
+			<div v-else-if="score>95">学帝</div>
+			<div v-else-if="score>90">学圣</div>
+			<div v-else-if="score>85">学魔</div>
+			<div v-else-if="score>80">学霸</div>
+			<div v-else-if="score>75">学痞</div>
+			<div v-else-if="score>70">学民</div>
+			<div v-else-if="score>65">学弱</div>
+			<div v-else-if="score>60">学渣</div>
+			<div v-else-if="score>55">学酥</div>
+			<div v-else-if="score>50">学糕</div>
+			<div v-else>学鬼</div>
+
+		</div>
+		<script>
+			new Vue({
+				el: '#div1',
+				data: {
+					score: 0
+				},
+				methods: {
+					search: function() {
+						this.score = Math.random() * 100
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

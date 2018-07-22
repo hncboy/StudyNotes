@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>v-else</title>
+		<script src="../vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="div1">
+			<input type="button" @click="lottery" value="抽奖">
+			<div v-if="show">中奖了</div>
+			<div v-else>谢谢惠顾！</div>
+		</div>
+
+		<script>
+			new Vue({
+				el: '#div1',
+				data: {
+					show: false
+				},
+				methods: {
+					lottery: function() {
+						this.show = Math.random() < 0.1
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>
