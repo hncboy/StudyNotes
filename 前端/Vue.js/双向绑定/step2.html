@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>多种风格数据的绑定</title>
+		<script src="../vue.min.js"></script>
+		<style>
+			table tr td {
+				border: 1px solid gray;
+				padding: 10px;
+			}
+			
+			table {
+				border-collapse: collapse;
+				width: 800px;
+				table-layout: fixed;
+			}
+			
+			tr.firstLine {
+				background-color: lightGray;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="div1">
+			<table align="center">
+				<thead>
+					<tr class="firstLine">
+						<td>视图类型</td>
+						<td>输入数据</td>
+						<td>绑定到Vue上的数值</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>单行文本</td>
+						<td><input v-model="input" placeholder="输入数据"></td>
+						<td>{{input}}</td>
+					</tr>
+					<tr>
+						<td>多行文本</td>
+						<td><textarea v-model="textarea" placeholder="输入数据"></textarea></td>
+						<td>{{textarea}}</td>
+					</tr>
+					<tr>
+						<td>单个复选框</td>
+						<td><input type="checkbox" v-model="checked"></td>
+						<td>{{checked}}</td>
+					</tr>
+					<tr>
+						<td>多个复选框</td>
+						<td>
+							<input type="checkbox" value="java" v-model="checkeds">java
+							<input type="checkbox" value="php" v-model="checkeds">php
+							<input type="checkbox" value="python" v-model="checkeds">python
+						</td>
+						<td>{{checkeds}}</td>
+					</tr>
+					<tr>
+						<td>单选按钮</td>
+						<td>
+							<input type="radio" value="java" v-model="radio">java
+							<input type="radio" value="php" v-model="radio">php
+							<input type="radio" value="python" v-model="radio">python
+						</td>
+						<td>{{radio}}</td>
+					</tr>
+					<tr>
+						<td>单选选择框</td>
+						<td>
+							<select v-model="selected" size="5">
+								<option disabled value="">请选择</option>
+								<option>java</option>
+								<option>php</option>
+								<option>python</option>
+							</select>
+						</td>
+						<td>{{selected}}</td>
+					</tr>
+					<tr>
+						<td>多选选择框</td>
+						<td>
+							(通过ctrl或者shift进行多选)<br>
+							<select v-model="selecteds" multiple="" size="5">
+								<option disabled value="">请选择</option>
+								<option>java</option>
+								<option>php</option>
+								<option>python</option>
+							</select>
+						</td>
+						<td>{{selecteds}}</td>
+					</tr>
+					<tr>
+						<td>单个复选框</td>
+						<td>
+							默认值是true或false，也可以修改为自己定义的值<br>
+							<input type="checkbox" true-value="选中" false-value="未选中" v-model="toggle">
+						</td>
+						<td>{{toggle}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<script>
+			new Vue({
+				el: '#div1',
+				data: {
+					input: '',
+					textarea: '',
+					checked: '',
+					checkeds: [],
+					radio: '',
+					selected: '',
+					selecteds: [],
+					toggle: '',
+				}
+			})
+		</script>
+	</body>
+
+</html>

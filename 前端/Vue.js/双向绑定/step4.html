@@ -1,0 +1,65 @@
+<!--
+	有时候，拿到了数据需要进行数学运算， 为了保证运算结果，必须先把类型转换为number类型，
+	而v-model默认是string类型，所以就可以通过.number方式确保获取到的是数字类型了。
+	typeof 用于获取数据的类型
+-->
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>修饰符 .number</title>
+		<script src="../vue.min.js"></script>
+		<style>
+			table tr td {
+				border: 1px solid gray;
+				padding: 10px;
+			}
+			
+			table {
+				border-collapse: collapse;
+				width: 800px;
+				table-layout: fixed;
+			}
+			
+			tr.firstLine {
+				background-color: lightGray;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="div1">
+			<table align="center">
+				<tr class="firstLine">
+					<td>视图类型</td>
+					<td>输入数据</td>
+					<td>绑定到Vue上的数值</td>
+					<td>数值类型</td>
+				</tr>
+				<tr>
+					<td>单行文本1</td>
+					<td><input v-model="input1" type="number" placeholder="输入数据"></td>
+					<td>{{input1}}</td>
+					<td>{{typeof input1}}</td>
+				</tr>
+				<tr>
+					<td>单行文本2</td>
+					<td><input v-model.number="input2" type="number" placeholder="输入数据"></td>
+					<td>{{input2}}</td>
+					<td>{{typeof input2}}</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			new Vue({
+				el: '#div1',
+				data: {
+					input1: '',
+					input2: ''
+				}
+			})
+		</script>
+	</body>
+
+</html>

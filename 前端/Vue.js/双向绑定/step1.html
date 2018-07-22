@@ -3,19 +3,25 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>v-bind:href 简写成 :href </title>
+		<title>v-model 双向绑定</title>
 		<script src="../vue.min.js"></script>
 	</head>
 
 	<body>
 		<div id="div1">
-			<a :href="page">http://www.hncboy.top</a>
+			<input v-model="name">
+			<input type="button" value="提交数据" @click="submit">
 		</div>
 		<script>
 			new Vue({
 				el: '#div1',
 				data: {
-					page: 'http://www.hncboy.top'
+					name: '你好'
+				},
+				methods: {
+					submit: function() {
+						alert(this.name);
+					}
 				}
 			})
 		</script>
