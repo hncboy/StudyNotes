@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>不用 computed</title>
+		<script src="../vue.min.js"></script>
+		<style>
+			table tr td {
+				border: 1px solid gray;
+				padding: 10px;
+			}
+			
+			table {
+				border-collapse: collapse;
+				width: 800px;
+				table-layout: fixed;
+			}
+			
+			tr.firstLine {
+				background-color: lightGray;
+			}
+			
+			td {
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="div1">
+			<table align="center">
+				<thead>
+					<tr class="firstLine">
+						<th>人名币</th>
+						<th>美元</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="2">汇率：<input type="number" v-model.number="exchange"></td>
+					</tr>
+					<tr>
+						<td>￥：<input type="number" v-model.number="rmb"></td>
+						<td>$：{{rmb/exchange}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<script>
+			new Vue({
+				el: '#div1',
+				data: {
+					exchange: 6.4,
+					rmb: 0
+				}
+			})
+		</script>
+	</body>
+
+</html>
