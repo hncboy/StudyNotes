@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>局部组件</title>
+		<script src="../vue.min.js"></script>
+		<style>
+			div.product {
+				float: left;
+				border: 1px solid lightGray;
+				width: 200px;
+				margin: 10px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="div1">
+			<product></product>
+			<product></product>
+			<product></product>
+		</div>
+		<script>
+			new Vue({
+				el: '#div1',
+				components: {
+					'product': {
+						template: '<div class="product" >Hello Vue!</div>'
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>
