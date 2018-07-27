@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>带参数的自定义指令</title>
+		<script src="../vue.min.js"></script>
+	</head>
+
+	<body>
+		<div id="div1">
+			<div v-xart="{color:'red',text:'best learning video'}"> 好好学习，天天向上 </div>
+		</div>
+		<script>
+			Vue.directive('xart', function(el, binding) {
+				el.innerHTML = el.innerHTML + '(' + binding.value.text + ')'
+				el.style.color = binding.value.color
+			})
+			new Vue({
+				el: '#div1'
+			})
+		</script>
+	</body>
+
+</html>
