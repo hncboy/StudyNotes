@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>fetch.js</title>
+		<script src="../fetch.min.js"></script>
+	</head>
+
+	<body>
+		<div id="hero"></div>
+		<script>
+			var url = "http://localhost:8080/cat"
+			fetch(url).then(function(response) {
+				response.json().then(function(jsonObject) {
+					var jsonString = JSON.stringify(jsonObject)
+					document.getElementById("hero").innerHTML = "通过fetch获取到的json数据：" + jsonString
+				}).catch(function(error) {
+					console.log("Fetch错误：" + error)
+				})
+			})
+		</script>
+	</body>
+
+</html>
