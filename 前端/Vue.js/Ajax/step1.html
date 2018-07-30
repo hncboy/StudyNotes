@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>fetch.js 方式</title>
+		<script src="../fetch.min.js"></script>
+		<script src="../vue.min.js"></script>
+		<style>
+			table tr td th {
+				border: 1px solid gray;
+			}
+			
+			table {
+				border-collapse: collapse;
+				width: 300px;
+			}
+			
+			tr.firstLine {
+				background-color: lightGray;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="div1">
+			<table align="center">
+				<thead>
+					<tr class="firstLine">
+						<th>name</th>
+						<th>hp</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="hero in heros">
+						<td>{{hero.name}}</td>
+						<td>{{hero.hp}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<script>
+			var url = "http://how2j.cn/study/jsons.txt";
+			new Vue({
+				el: '#div1',
+				data: {
+					heros: []
+				},
+				mounted: function() { //mounted　表示这个 Vue 对象加载成功了
+					var self = this;
+					fetch(url).then(function(response) {
+						response.json().then(function(response) {
+							self.heros = jsonObject
+						}).catch(function(error) {
+							console.log("Fetch错误：" + error)
+						})
+					})
+				}
+			})
+		</script>
+	</body>
+
+</html>
