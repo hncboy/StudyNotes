@@ -20,3 +20,5 @@ Java 中的每一个对象都可以作为锁，3 种表现形式如下：
 JVM 基于进入和退出 Monitor 对象来实现方法同步和代码块同步。代码块同步是使用 monitorenter 和 monitorexit 指令实现的。monitorenter 指令是在编译后插入到同步代码块的开始位置，monitorexit 指令是插入到方法的结束处和异常处。每个 monitorenter 都必须有对应的 monitorexit。每个对象都有一个 monitor 关联，当且一个 monitor 被持有后，它将处于锁定状态。线程执行到 monitorenter 指令时，会尝试获取对象对应的 monitor，即尝试获得对象的锁。
 
 ## 1.Java 对象头
+## 2.锁的升级和对比
+
