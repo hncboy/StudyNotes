@@ -121,7 +121,7 @@ public class WelcomeApp2 {
 ```
 
 ## 3.2 Runnable 接口
-Runnable 接口只定义了一个 run 方法，Runnable 接口可以看作对任务进行的抽象，Thread 类是 Runnable 接口的一个实现类。部分源码（基于 jdk8）如下所示：
+Runnable 接口只定义了一个 run 方法，Runnable 接口可以看作对任务进行的抽象，Thread 类是 Runnable 接口的一个实现类。部分源码（基于 jdk8，下面都是）如下所示：
 ```
 private Runnable target;
 
@@ -151,7 +151,7 @@ public class ThreadCreationCmp {
         CountingTask ct = new CountingTask();
         // 获取处理器个数
         final int numberOfProceesors = Runtime.getRuntime().availableProcessors();
-        System.out.println("numberOfProceesors:" + numberOfProceesors);
+        System.out.println("NumberOfProceesors:" + numberOfProceesors);
         for (int i = 0; i < 2 * numberOfProceesors; i++) {
             // 直接创建线程
             thread = new Thread(ct);
@@ -215,7 +215,7 @@ public class ThreadCreationCmp {
 ```
 该程序运行在处理器个数为 4 的主机上，“CountingTask:”后跟的最大数字可能小于 800（2*4*100），而“CountingThread:”后跟的数字始终都是 100，具体原因见第 2 章，运行结果如下：
 ```
-numberOfProceesors:4
+NumberOfProceesors:4
 CountingThread:100
 CountingTask:722
 CountingThread:100
@@ -233,3 +233,120 @@ CountingThread:100
 CountingThread:100
 CountingTask:792
 ```
+
+## 3.3 线程属性
+线程的属性包括线程的编号（ID）、名称（Name）、线程类别（Daemon）和优先级（Priority）。这几个属性的源码如下：
+```
+/** Thread ID */
+private long tid;
+
+private volatile String name;
+
+private int priority;
+
+/** Whether or not the thread is a daemon thread. */
+private boolean daemon = false;
+```
+- 编号（ID）：用于标识不同的线程，不同的线程拥有不同的编号，该属性只读。
+- 名称（Name）：用于区分不同的线程，默认值的格式为：“Thread-线程编号”，如“Thread-0”，该属性有助于程序调试和问题定位。
+- 线程类别（Daemon）：值为 true 表示相应的线程为守护线程（Daemon Thread）。false 为用户线程（User Thread，也称非守护线程），该属性的默认值与相应线程的父线程的该属性的值相同。用户线程会阻止 JVM 的正常停止，一个 JVM 只有在其所有用户线程都运行结束（即 Thread.run() 调用结束）的情况下才能正常停止，而守护线程则不会影响。
+- 优先级（Priority）：1 到 10 个优先级，默认值一般为 5。不恰当的设置该属性值可能导致严重的问题（线程饥饿）。
+
+## 3.4 Thread 类的常用方法
+- static Thread currentThread()：返回当前线程，同一段代码调用该方法，返回值可能对应着不同的线程。
+- void run()：由 JVM 直接调用，一般情况应用程序不直接调用。
+- void start()：启动相应线程。调用该方法不代表相应的线程已经启动，多次调用一个线程的 start 方法会抛出异常。
+- void join()：等待相应线程运行结束。若线程 A 调用线程 B 的 join 方法，那么线程 A 的运行会被暂停，等线程 B 运行结束再运行。
+- static void yield()：使当前线程主动放弃其对处理器的占用，当前线程也可能仍然继续运行。
+- static void sleep(long millis)：线程休眠。
+
+## 3.5 Thread 类的一些废弃方法
+- public final void stop()：停止线程的运行
+- public final void suspend()：暂停线程的运行
+- public final void resume()：使被暂停的线程继续运行
+
+# 4.无处不在的线程
+除了 Java 开发人员自己创建的线程，Java 平台中其他由 Java 虚拟机创建、使用的线程也随处可见。 
+- JVM 启动时会创建一个 main 线程，代码如下所示：
+```
+public class JavaThreadAnywhere {
+
+    public static void main(String[] args) {
+        Thread currentThread = Thread.currentThread();
+        String currentThreadName = currentThread.getName();
+        System.out.println("The main method was executed by thread:" + currentThreadName);
+        Helper helper = new Helper("Java Thread AnyWhere");
+        helper.run();
+    }
+
+    static class Helper implements Runnable {
+
+        private final String message;
+
+        Helper(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            doSomething(message);
+        }
+
+        private void doSomething(String message) {
+            Thread currentThread = Thread.currentThread();
+            String currentThreadName = currentThread.getName();
+            System.out.println("The doSomething method was executed by thread:" + currentThreadName);
+            System.out.println("Do something with " + message);
+        }
+    }
+}
+```
+运行结果为：
+```
+The main method was executed by thread:main
+The doSomething method was executed by thread:main
+Do something with Java Thread AnyWhere
+```
+
+- Web 应用中的 Servlet 类的 doGet 和 doPost 方法也由确定的线程执行。
+- GC 负责对 Java 程序中不再使用的内存空间进行回收，回收动作也是由专门的<strong>垃圾回收线程</strong>实现的。这些线程由 JVM 自行创建。从垃圾回收的角度，Java 平台中线程可以分为垃圾回收线程和应用线程（用户创建的线程）。
+- 为了提高 Java 代码运行效率，JIT（Just In Time）编译器会动态地将 Java 字节码（Byte Code）编译为 Java 虚拟机宿主机处理器可直接执行的机器码（本地代码），这个动态编译的过程也是由 JVM 创建特定线程执行的。
+
+# 5.线程的层次关系
+Java 平台中线程不是孤立的，线程 A 执行的代码创建了线程 B，那么，可以称线程 B 为线程 A 的子线程。子线程所执行的代码也可以创建其他子线程，父线程、子线程只是一个相对的称呼。这种父子关系称为线程的层次关系，如图 1 所示：
+<div align = "center">  
+    <img src="pics/chapter01/ab9def94-c852-45cf-b617-c6bd4a567e0e.png" />
+</div>
+<div align = "center"> 图 1 </div><br>
+
+- 默认情况下父线程是守护线程，则子线程也是守护线程；父线程是用户线程，则子线程也是用户线程。
+- 一个线程的优先级默认值为该线程的父线程的优先级。
+- 父线程和子线程的生命周期没有必然的联系。父线程运行结束后子线程可以继续运行。
+- 某些子线程也可以称为工作者线程（Worker Thread）或后台线程（Background Thread）。
+
+# 6.线程的生命周期状态
+Java 线程的状态用 enum 类型存储，可以通过 Thread.getState() 获取线程的状态。一个线程在其生命周期中，只可能有一次处于 NEW 状态和 TERMINATED 状态。线程的生命周期状态转换图如图 2 所示。
+```
+public enum State {
+    NEW,
+    RUNNABLE,
+    BLOCKED,
+    WAITING,
+    TIMED_WAITING,
+    TERMINATED;
+}
+```
+
+图 2 TODO
+
+- NEW：一个已创建而未启动的线程处于该状态。由于一个线程实例只能被 start 一次，所以一个线程只可能有一此处于该状态。
+- RUNNABLE：该状态为一个复合状态，包含两个子状态。
+  - READY：活跃线程，表示该状态的线程可以被线程调度器调度而使之处于 RUNNING 状态。
+  - RUNNING：表示该状态的线程正在运行，即正在执行 run 方法。执行 Thread.yield() 的线程，其状态可能会由 RUNNING 转换为 READY。 
+- BLOCKED：一个线程发起一个阻塞式 I/O（Blocking I/O）操作后，或者申请一个由其他线程持有的独占资源（比如锁）时，对应的线程会处于该状态。处于该状态的线程不会占用处理器资源。当阻塞式 I/O 操作完成后，或者线程获得了其申请的资源，该线程的状态又会转换为 RUNNABLE。
+- WAITING：一个线程执行了某些特定方法后就会处于这种等待其他线程执行另外一些特定操作的状态。
+  - RUNNING -> WAITING：Object.wait()、Thread.join()、LockSupport.park(Object)
+  - WAITING -> RUNNING：Object.notify()、Object.notifyAll()、LockSupport.unpark(Object)
+- TIMED_WAITING：区别于 WAITING，该状态为带有时间限制的等待状态。
+- TERMINATED：已经执行结束的线程处于该状态。因为一个线程实例只能被 start 一次，所以一个线程只可能有一此处于该状态。当线程执行正常结束或抛出异常时都会处于该状态。
+  
