@@ -11,7 +11,7 @@ ArrayList 底层通过动态数组的数据结构实现
 
 ArrayList 的继承与实现的关系图如下所示。
 
-![ArrayList 关系图](https://img-blog.csdnimg.cn/20191208222430114.png))
+![ArrayList 关系图](https://img-blog.csdnimg.cn/20191208222430114.png)
 
 以下说明摘自 JDK 文档。
 
