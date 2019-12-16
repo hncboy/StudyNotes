@@ -1,7 +1,8 @@
 ## :coffee: Java
 
 - [什么是反射？](https://github.com/hncboy/StudyNotes/blob/master/Java/%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84%EF%BC%9F.md)
-- 什么是泛型？
+- [什么是泛型？](https://github.com/hncboy/StudyNotes/blob/master/Java/什么是泛型？.md)
+- [什么是注解？](https://github.com/hncboy/StudyNotes/blob/master/Java/什么是注解？.md)
 - [ArrayList 源码分析](https://github.com/hncboy/StudyNotes/blob/master/Java/ArrayList%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.md)
 - [LinkedList 源码分析](https://github.com/hncboy/StudyNotes/blob/master/Java/LinkedList%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.md)
 
