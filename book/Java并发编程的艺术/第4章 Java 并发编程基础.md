@@ -3,7 +3,7 @@
 现代操作系统调度的最小单元是线程，也叫轻量级进程（Light Weight Process），一个进程中可以创建多个线程，每个线程都拥有各自的计数器、堆栈和局部变量等属性，并且能够访问共享的内存变量。
 
 运行一个普通 Java 程序，代码如下：
-```
+```java
 public class MultiThread {
 
     public static void main(String[] args) {

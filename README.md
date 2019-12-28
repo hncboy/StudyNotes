@@ -1,10 +1,19 @@
-## :coffee: Java
+##  :coffee: Java
+
+### Java 基础
 
 - [什么是反射？](https://github.com/hncboy/StudyNotes/blob/master/Java/%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84%EF%BC%9F.md)
 - [什么是泛型？](https://github.com/hncboy/StudyNotes/blob/master/Java/什么是泛型？.md)
 - [什么是注解？](https://github.com/hncboy/StudyNotes/blob/master/Java/什么是注解？.md)
+
+### Java 集合
+
 - [ArrayList 源码分析](https://github.com/hncboy/StudyNotes/blob/master/Java/ArrayList%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.md)
 - [LinkedList 源码分析](https://github.com/hncboy/StudyNotes/blob/master/Java/LinkedList%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.md)
+
+### Java 并发
+
+
 
 ##  :pencil:算法
 
@@ -32,9 +41,8 @@
 ### 《Java并发编程的艺术》
 
 - [第1章 并发编程的挑战](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC1%E7%AB%A0%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E6%8C%91%E6%88%98.md)
-
 - [第2章 Java 并发机制的底层实现原理](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC2%E7%AB%A0%20Java%20%E5%B9%B6%E5%8F%91%E6%9C%BA%E5%88%B6%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.md)
-
+- 第3章 Java 内存模型
 - [第4章 Java 并发编程基础](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC4%E7%AB%A0%20Java%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.md)
 
 ### 《深入理解 Java 虚拟机》
