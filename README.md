@@ -13,7 +13,7 @@
 
 ### Java 并发
 
-
+- [并发编程的理论基石](https://github.com/hncboy/StudyNotes/blob/master/Java/并发编程的理论基石.md)
 
 ##  :pencil:算法
 
@@ -47,7 +47,7 @@
 
 ### 《Java并发编程的艺术》
 
-- 第1章 简介
+- [第1章 简介](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/%E7%AC%AC1%E7%AB%A0%20%E7%AE%80%E4%BB%8B.md)
 
 ### 《深入理解 Java 虚拟机》
 
