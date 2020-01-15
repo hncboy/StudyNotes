@@ -44,7 +44,7 @@ class WelcomeThread extends Thread {
 
 - Thread(Runnable target) 构造器：创建一个 Runnable 接口的实例，并在该实例的 run 方法中实现任务逻辑。代码如下所示。
   
-```
+```java
 public class WelcomeApp1 {
 
     public static void main(String[] args) {
@@ -63,12 +63,12 @@ class WelcomeTask implements Runnable {
 ```
 
 通过 Thread.currentThread() 可以获取当前这段代码的执行线程，多次运行结果可能为：
-```
+```java
 1.welcome! I'm main
 2.welcome! I'm Thread-0
 ```
 或
-```
+```java
 2.welcome! I'm Thread-0
 1.welcome! I'm main
 ```
@@ -76,7 +76,7 @@ class WelcomeTask implements Runnable {
 一旦 run 方法执行（由 Java 虚拟机调用）结束，相应的线程运行也结束了。run 方法可以正常结束也可以由代码中抛出异常而导致的中止。运行结束的线程（如内存空间）会和 Java 对象一样被 GC 回收。
 
 Thread 的 start 只能被调用一次，一个运行结束的线程不能通过再次调用 start 方法使其重新运行，多次调用同一个 Thread 的 start 方法会抛出 IllegalThreadStateException 异常。代码如下所示：
-```
+```java
 public class IllegalWelcomeApp {
 
     public static void main(String[] args) {
@@ -88,7 +88,7 @@ public class IllegalWelcomeApp {
 }
 ```
 运行结果为：
-```
+```java
 Exception in thread "main" java.lang.IllegalThreadStateException
 	at java.lang.Thread.start(Thread.java:708)
 	at com.hncboy.chapter01.IllegalWelcomeApp.main(IllegalWelcomeApp.java:14)
@@ -97,7 +97,7 @@ Exception in thread "main" java.lang.IllegalThreadStateException
 在 Java 平台中，一个线程就是一个对象，JVM 会为每个线程分配调用栈（Call Stack）所需的内存空间。调用栈用于跟踪 Java 代码（方法）间的调用关系以及 Java 代码对本地代码的调用。另外，Java 平台中的每个线程可能还有一个内核线程（具体与 Java 虚拟机的实现有关）与之对应。因此，创建一个线程对象比其他类型的对象成本更高一些。
 
 线程的 run 方法是由 JVM 直接调用的，因为 run 方法也属于 Thread 的一个 public 方法，我们也可以直接调用 run 方法。代码如下所示：
-```
+```java
 public class WelcomeApp2 {
 
     public static void main(String[] args) {
@@ -113,7 +113,7 @@ public class WelcomeApp2 {
 }
 ```
 直接通过 run 运行的线程实际运行在 main 线程中，运行结果如下：
-```
+```java
 2.welcome! I'm main
 1.welcome! I'm main
 2.welcome! I'm Thread-0
@@ -121,7 +121,7 @@ public class WelcomeApp2 {
 
 ## 3.2 Runnable 接口
 Runnable 接口只定义了一个 run 方法，Runnable 接口可以看作对任务进行的抽象，Thread 类是 Runnable 接口的一个实现类。部分源码（基于 jdk8，下面都是）如下所示：
-```
+```java
 private Runnable target;
 
 public Thread(Runnable target) {
@@ -142,7 +142,7 @@ public void run() {
 - 第 2 种创建方法（以 Runnable 接口实例为构造器参数直接通过 new 创建 Thread 实例）是一种基于组合（Composition）的技术。
 
 一般采用组合的方式创建线程，因为该方式类与类之间的耦合性（Coupling）更低，因为更加灵活。线程两种创建方式的区别代码如下：
-```
+```java
 public class ThreadCreationCmp {
 
     public static void main(String[] args) {
@@ -213,7 +213,7 @@ public class ThreadCreationCmp {
 }
 ```
 该程序运行在处理器个数为 4 的主机上，“CountingTask:”后跟的最大数字可能小于 800（2*4*100），而“CountingThread:”后跟的数字始终都是 100，具体原因见第 2 章，运行结果如下：
-```
+```java
 NumberOfProceesors:4
 CountingThread:100
 CountingTask:722
@@ -235,7 +235,7 @@ CountingTask:792
 
 ## 3.3 线程属性
 线程的属性包括线程的编号（ID）、名称（Name）、线程类别（Daemon）和优先级（Priority）。这几个属性的源码如下：
-```
+```java
 /** Thread ID */
 private long tid;
 
@@ -267,7 +267,7 @@ private boolean daemon = false;
 # 4.无处不在的线程
 除了 Java 开发人员自己创建的线程，Java 平台中其他由 Java 虚拟机创建、使用的线程也随处可见。 
 - JVM 启动时会创建一个 main 线程，代码如下所示：
-```
+```java
 public class JavaThreadAnywhere {
 
     public static void main(String[] args) {
@@ -301,7 +301,7 @@ public class JavaThreadAnywhere {
 }
 ```
 运行结果为：
-```
+```java
 The main method was executed by thread:main
 The doSomething method was executed by thread:main
 Do something with Java Thread AnyWhere
@@ -317,7 +317,6 @@ Java 平台中线程不是孤立的，线程 A 执行的代码创建了线程 B�
     <img src="pics/chapter01/ab9def94-c852-45cf-b617-c6bd4a567e0e.png" />
 </div>
 <div align = "center"> 图 1 </div><br>
-
 - 默认情况下父线程是守护线程，则子线程也是守护线程；父线程是用户线程，则子线程也是用户线程。
 - 一个线程的优先级默认值为该线程的父线程的优先级。
 - 父线程和子线程的生命周期没有必然的联系。父线程运行结束后子线程可以继续运行。
@@ -325,7 +324,7 @@ Java 平台中线程不是孤立的，线程 A 执行的代码创建了线程 B�
 
 # 6.线程的生命周期状态
 Java 线程的状态用 enum 类型存储，可以通过 Thread.getState() 获取线程的状态。一个线程在其生命周期中，只可能有一次处于 NEW 状态和 TERMINATED 状态。线程的生命周期状态转换图如图 2 所示。
-```
+```java
 public enum State {
     NEW,
     RUNNABLE,

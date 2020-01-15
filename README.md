@@ -42,8 +42,12 @@
 
 - [第1章 并发编程的挑战](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC1%E7%AB%A0%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E6%8C%91%E6%88%98.md)
 - [第2章 Java 并发机制的底层实现原理](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC2%E7%AB%A0%20Java%20%E5%B9%B6%E5%8F%91%E6%9C%BA%E5%88%B6%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.md)
-- 第3章 Java 内存模型
+- [第3章 Java 内存模型](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC3%E7%AB%A0%20Java%20%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md)
 - [第4章 Java 并发编程基础](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC4%E7%AB%A0%20Java%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.md)
+
+### 《Java并发编程的艺术》
+
+- 第1章 简介
 
 ### 《深入理解 Java 虚拟机》
 

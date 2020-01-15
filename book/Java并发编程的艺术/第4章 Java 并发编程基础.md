@@ -35,7 +35,7 @@ public class MultiThread {
 
 在 Java 线程中，可以通过 setPriority 方法来修改线程优先级，优先级范围为 1 - 10， 默认优先级是 5。设置线程优先级时，针对频繁阻塞（休眠或者 I/O 操作）的线程需要设置较高优先级，而偏重计算（需要较多 CPU 时间或者偏运算）的线程则设置较低的优先级，确保优先级不会被独占。
 测试线程优先级的代码如下所示：
-```
+```java
 public class Priority {
 
     private static volatile boolean notStart = true;
