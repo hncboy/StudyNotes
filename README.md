@@ -13,7 +13,8 @@
 
 ### Java 并发
 
-- [并发编程的理论基石](https://github.com/hncboy/StudyNotes/blob/master/Java/并发编程的理论基石.md)
+- [并发编程的理论基石](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-并发编程的理论基石.md)
+- [线程的启动与终止](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的启动与终止.md)
 
 ##  :pencil:算法
 

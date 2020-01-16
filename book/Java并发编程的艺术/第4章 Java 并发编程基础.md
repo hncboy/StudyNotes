@@ -106,3 +106,65 @@ Job Priority : 10, Count : 2002592
 | WAITING | 等待状态，表示线程进入等待状态，进入该状态表示当前线程需要等待其他线程做出一些特定动作（通知或中断） |
 | TIME_WAITING | 超时等待状态，该状态不同于 WAITING，它是可以在指定的时间内自行返回的 |
 | TERMINATED | 终止状态，表示当前线程已经执行完毕 |
+
+![](pics\f327cd4e-b18a-41a2-afa1-425bf6bf0dcb.png)
+
+Java 将操作系统中的运行和就绪两个状态合并为运行状态。阻塞状态是线程阻塞在进入 synchronized 关键字修饰的方法或代码块（获取锁）时的状态，但是阻塞在 J.U.C 下 Lock 接口的线程状态却是等待状态，因为 J.U.C 包中 Lock 接口对于阻塞的实现均使用了 LockSupport 类中的相关方法。
+
+## 5.Daemen 线程
+
+Damen 线程是一种支持型线程，因为它主要被作用程序中后台调度以及支持性工作。如果 JVM 中不存在 Daemon 线程时，JVM 将会退出。通过调用 Thread.setDaemon(true) 将线程设置为 Daemon 线程，Daemon 属性需要在启动线程之前设置，不能在启动线程之后设置。
+
+在构建 Daemon 线程时，不能依靠 finally 块中的内容来确保执行关闭或清理资源的逻辑。如下程序在控制台上没有任何输出，因为在 main 线程运行完毕后，JVM 就退出了，没有继续执行守护线程的方法。
+
+```java
+public class Daemon {
+
+    public static void main(String[] args) {
+        Thread thread = new Thread(new DaemonRunner());
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private static class DaemonRunner implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                System.out.println("DaemonThread finally run.");
+            }
+        }
+    }
+}
+```
+
+# 二、启动和终止线程
+
+## 1.构造线程
+
+一个新构造地线程对象是由其父线程来进行空间分配的，子线程会继承父线程的 Daemon、优先级、加载资源的 contextClassLoader 以及可继承的 ThreadLocal，同时还会分配一个唯一的 ID 来标识这个线程。
+
+## 2.启动线程
+
+调用 start() 方法启动线程：当前父线程同步告知 JVM，只要线程规划器空闲，会立即启动调用 start() 方法的线程。
+
+## 3.理解中断
+
+中断表示一个运行中的线程是否被其他线程进行了中断，中断好比其他线程对该线程打了个招呼，其他线程通过调用该线程的 interrupt() 方法对其进行中断操作。
+
+线程通过调用 isInterrupted() 方法来判断是否被中断，也可以调用静态方法 Thread.interrupted() 对当前线程的中断标识位进行恢复。
+
+许多声明抛出 InterruptedException 异常的方法（如 Thread.sleep(long millis) 方法）在抛出异常前，JVM 会重置该线程的中断标识位，然后才抛出异常。
+
+## 4.过期的 suspend()、resume() 和 stop()
+
+这些过期方法会带来副作用，如 suspend() 方法在调用后，线程挂起，但是不会释放已经占有的资源（比如锁），而是占有着资源进入睡眠状态，容易引发死锁。stop() 方法在终结一个线程时不会保证线程的资源正常释放，可能导致程序的工作发生问题。
+
+## 5.安全地终止线程
+
+中断状态可以合理的用来终止线程，除此之外，还可以用 volatile 修饰的变量来进行标记。
+
