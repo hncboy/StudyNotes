@@ -20,7 +20,7 @@ public class Priority {
             int priority = i < 5 ? Thread.MIN_PRIORITY : Thread.MAX_PRIORITY;
             Job job = new Job(priority);
             jobs.add(job);
-            Thread thread = new Thread(job, "Thread:" + 1);
+            Thread thread = new Thread(job, "Thread:" + i);
             thread.setPriority(priority);
             thread.start();
         }
