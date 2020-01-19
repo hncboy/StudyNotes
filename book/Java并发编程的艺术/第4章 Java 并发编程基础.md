@@ -47,7 +47,7 @@ public class Priority {
             int priority = i < 5 ? Thread.MIN_PRIORITY : Thread.MAX_PRIORITY;
             Job job = new Job(priority);
             jobs.add(job);
-            Thread thread = new Thread(job, "Thread:" + 1);
+            Thread thread = new Thread(job, "Thread:" + i);
             thread.setPriority(priority);
             thread.start();
         }
@@ -167,4 +167,78 @@ public class Daemon {
 ## 5.安全地终止线程
 
 中断状态可以合理的用来终止线程，除此之外，还可以用 volatile 修饰的变量来进行标记。
+
+# 三、线程间通信
+
+## 1.volatile 和 synchronized 关键字
+
+## 2.等待/通知机制
+
+一个线程修改了一个对象的值，而另一个线程感知到了变化，然后进行相应的操作，前者是生产者，后者是消费者。用 Java 实现这种功能的话，最简单的方式就是让消费者不断地循环检查变量是否符合预期。如下代码所示。
+
+```java
+while (value != desire) {
+    Thread.sleep(1000);
+}
+doSomething();
+```
+
+上面这段伪代码在条件不满足时就睡眠一段时间，这种方式能实现预期，不过存在缺陷。
+
+- 难以确保及时性。可能睡眠过多不能及时发现条件变化。
+- 难以降低开销。睡眠时间降低的话又会增加处理器的消耗。
+
+上述问题可以通过 Java 内置的等待/通知机制实现，等待/通知机制是任意 Java 对象都具备的，因为这些方法被定义在 Object 中。
+
+| 方法名称        | 描述                                                         |
+| --------------- | ------------------------------------------------------------ |
+| notify()        | 通知一个在对象上等待的线程，使其从 wait() 方法返回，而返回的前提是该线程获取到了对象的锁 |
+| notifyAll()     | 通知所有等待在该对象上的线程                                 |
+| wait()          |                                                              |
+| wait(long)      |                                                              |
+| wait(long, int) |                                                              |
+
+等待/通知机制，是指一个线程 A 调用了对象 O 的wait() 方法进入到等待状态，而另一个线程 B 调用了对象 O 的 notify() 或者 notifyAll() 方法，线程 A 收到通知后从对象 O 的 wait() 方法返回，进而执行后续操作。
+
+使用 wait 和 notify 需要注意的细节：
+
+- 使用 wait()、notify()、notifyAll() 时需要先对调用对象加锁。
+- 使用 wait() 方法后，线程状态由 RUNNING 变为 WAITING，并将当前线程放置到对象的等待队列。
+- notify() 或 notifyAll() 方法调用后，等待线程依旧不会从 wait() 返回，需要调用 notify() 或 notifyAll() 的线程释放锁之后，等待线程才有机会从 wait() 返回。
+- notify() 方法将等待队列中的一个等待线程从等待队列移动到同步队列，而 notifyAll() 方法则是将等待队列中所有的线程全部移动到同步队列，被移动的线程状态由 WAITING 变为 BLOCKED。
+- 从 wait() 方法返回的前提是获得了调用对象的锁。
+
+等待/通知机制依托于同步机制，其目的就是确保等待线程从 wait() 方法返回时能够感知到通知线程对变量做出的修改。
+
+## 3.等待/通知的经典范式
+
+等待方遵循如下原则：
+
+- 获取对象的锁。
+- 如果条件不满足，那么调用对象的 wait() 方法，被通知后仍要检查条件。
+- 条件满足则执行对应的逻辑。
+
+```java
+while (条件不满足) {
+    对象.wait();
+}
+对应的处理逻辑
+```
+
+通知放遵循如下原则：
+
+- 获得对象的锁。
+- 改变条件。
+- 通知所有等待在对象上的线程。
+
+```java
+synchronized (对象) {
+	改变条件
+    对象.notifyAll();
+}
+```
+
+## 4.管道输入/输出流
+
+## 5.Thread.join() 的使用
 
