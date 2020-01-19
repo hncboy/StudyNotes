@@ -16,7 +16,7 @@
 - [并发编程的理论基石](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-并发编程的理论基石.md)
 - [线程的启动与终止](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的启动与终止.md)
 - [线程的状态与属性](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的状态与属性.md)
-- [线程间通信 wait/notify](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程间通信 wait notify.md)
+- [线程间通信 wait 和 notify](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程间通信 wait notify.md)
 
 ##  :pencil:算法
 
