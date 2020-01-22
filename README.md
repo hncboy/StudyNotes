@@ -17,6 +17,7 @@
 - [线程的启动与终止](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的启动与终止.md)
 - [线程的状态与属性](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的状态与属性.md)
 - [线程间通信 wait/notify](https://github.com/hncboy/StudyNotes/blob/master/Java/%E5%B9%B6%E5%8F%91-%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%20wait%20notify.md)
+- [Thead 类的常用方法](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-Thead 类的常用方法.md)
 
 ##  :pencil:算法
 
