@@ -125,7 +125,11 @@ as-if-serial 语义把单线程程序保护了起来，使程序员无需担心�
 
 这里的 A happens-before B，但实际执行时 B 却可以在 A 之前执行。JMM 只要求前一个操作的执行结果对后一个操作可见，且前一个操作按顺序排在第二个操作之前。这里的操作 A 的执行结果不需要对操作 B 可见，而且重排序操作 A 和操作 B 的结果也一致。在这种情况下，JMM 会认为**这种重排序并不非法**，JMM 允许这种重排序。
 
+在计算机中，软件技术和硬件技术都有一个共同的目标：在不改变程序执行结果的前提下，尽可能提高并行度。编译器和处理器遵从这一目标，从 happens-before 的定义我们可以看出，JMM 同样遵从这个目标。
+
 ## 4.重排序对多线程的影响
+
+在单线程程序中，对存在控制依赖的操作重排序，不会改变执行结果（这也是 as-if-serial 语义允许对存在控制依赖的操作做重排序的原因）；但在多线程程序中，对存在控制依赖的操作重排序，可能会改变程序的执行结果。
 
 # 三、顺序一致性
 
@@ -138,6 +142,536 @@ as-if-serial 语义把单线程程序保护了起来，使程序员无需担心�
 ## 4.未同步程序的执行特性
 
 # 四、volatile 的内存语义
+
+## 1.volatile 的特性
+
+一个 volatile 变量的**单个**读/写操作，与一个普通变量的读/写操作都是使用同一个锁来同步。
+
+- 可见性。锁的 happens-before 规则保证释放锁和获取锁的两个线程之间的**内存可见性**，表示对一个 volatile 变量的读，总是能看到（任意线程）对这个 volatile 变量最后的写入。
+- 原子性（分情况）。锁的语义决定了临界区代码的执行具有原子性，对**任意单个** volatile 变量的读/写具有原子性，但类似 volatile++ 这种复合操作不具有原子性。
+
+## 2.volatile 写-读建立的 happens-before 关系
+
+从 JSR-133 开始（JDK5 开始），volatile 变量的写-读可以实现线程之间的通信。
+
+从内存语义的角度来说，volatile 的写-读与锁的释放-获取有相同的内存效果：volatile 的写与锁的释放以及 volatile 的读与锁的获取有相同的内存语义。
+
+volatile 变量的示例代码如下所示：
+
+```java
+class VolatileExample {
+    private int i = 0;
+    private volatile boolean flag;
+    
+    public void writer() {
+        i = 1;               // 1
+        flag = true;         // 2
+    }
+    
+    public void reader() {
+        if (flag) {          // 3
+            int j = i;       // 4
+        }
+    }
+}
+```
+
+假设线程 A 先执行 writer() 方法，线程 B 后执行 reader() 方法。根据 happens-before 规则，这个过程的 happens-before 规则可以分为以下 3 类：
+
+- 根据程序顺序规则：1 happens-before 2, 3 happens-before 4
+- 根据 volatile 规则：2 happens-before 3
+- 根据 happens-before 的传递性规则：1 happens-before 4
+
+上述 happens-before 关系如下图所示，黑色箭头表示程序顺序规则，红色箭头表示 volatile 规则，蓝色箭头表示根据 happens-before 传递性组合的规则。线程 A 在写 volatile 变量之前所有可见的共享变量，在线程 B 读同一个 volatile 变量后，立即对线程 B 可见。
+
+![image-20200202210038107](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200202210038107.png)
+
+## 3.volatile 写-读的内存语义
+
+- volatile 写的内存语义：当写一个 volatile 变量时，JMM 会把该线程对应的本地内存中的共享变量刷新到主内存。
+
+- volatile 读的内存语义：当读一个 volatile 变量时，JMM 会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量。
+
+用上一个 VolatileExample 例子做总结：
+
+- 线程 A 写一个 volatile 变量，实质上是线程 A 向接下来要读这个 volatile 变量的某个线程发出了消息（其对共享变量所做的修改）。
+- 线程 B 读一个 volatile 变量，实质上线程 B 接收了之前某个线程发出的消息（在写这个 volatile 变量之前对共享变量做的修改）。
+- 线程 A 写一个 volatile 变量，之后线程 B 读这个 volatile 变量，该过程实质上是线程 A 通过主内存向线程 B 发送消息。
+
+## 4.volatile 内存语义的实现
+
+### volatile 写/读内存语义实现概览
+
+为了实现 volatile 内存语义，JMM 会限制编译器重排序和处理器重排序。JMM 针对编译器制定的 volatile 重排序规则如下表所示。
+
+| 是否能重排序 | 第二个操作 | 第二个操作  | 第二个操作  |
+| ------------ | ---------- | ----------- | ----------- |
+| 第一个操作   | 普通读/写  | volatile 读 | volatile 写 |
+| 普通读/写    | yes        | yes         | no          |
+| volatile 读  | no         | no          | no          |
+| volatile 写  | yes        | no          | no          |
+
+根据上表可得出：
+
+- 当第二个操作是 volatile 写的时候，不管第一个操作是什么，都不能重排序。
+- 当第一个操作是 volatile 读的时候，不管第二个操作是什么，都不能重排序。
+- 当第一个操作是 volatile 写，第二个操作时 volatile 读的时候，不能重排序。
+
+为了实现 volatile 的内存语义，在编译器生成字节码时，会在指令序列中插入内存屏障来禁止特定类型的处理器重排序。JMM 会采用**保守策略**来最小化 JMM 内存屏障的插入策略，保守策略如下所示。采用保守策略可以保证在任意处理器平台，任意的程序中都能得到正确的 volatile 内存语义。
+
+- 在每个 volatile 写操作的前面插入一个 StoreStore 屏障。
+- 在每个 volatile 写操作的后面插入一个 StoreLoad 屏障。
+- 在每个 volatile 读操作的后面插入一个 LoadLoad 屏障。
+- 在每个 volatile 读操作的后面插入一个 LoadStore 屏障。
+
+### volatile 写的内存语义实现
+
+下面是在保守策略下，volatile 写插入内存屏障后生成的指令序列示意图。
+
+![image-20200203145738532](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200203145738532.png)
+
+StoreStore 屏障：保证在 volatile 写之前，将屏障上面的所有普通写在 volatile 写之前刷新到主内存，前面的普通写操作已经对任意处理器可见了。
+
+StoreLoad 屏障：避免 volatile 写与后面可能有的 volatile 读/写 操作重排序。因为编译器无法判断一个 volatile 写之后的操作（如一个 volatile 写之后立即 return），所以采取保守策略，有以下两种选择：
+
+- 第一种：在每个 volatile 写之后插入一个 StoreLoad 屏障。
+- 第二种：在每个 volatile 读之前插入一个 StoreLoad 屏障。
+
+从整体执行效率的角度看，JMM 选择了第一种方法，因为 volatile 常用于读多写少的情况，当读线程的数量大大超过写线程时，选择在 volatile 写之后插入 StoreLoad 屏障可以提高执行效率。从这里可以看出，JMM 的实现首先**保证正确性**，然后再去追求执行效率。
+
+### volatile 读的内存语义实现
+
+下面是在保守策略下，volatile 读插入内存屏障后生成的指令序列示意图。
+
+![image-20200203152036742](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200203152036742.png)
+
+LoadLoad 屏障：禁止处理器把上面的 volatile 读和下面的普通读重排序。
+
+LoadStore 屏障：禁止处理器把上面的 volatile 读和下面的普通写重排序。
+
+### volatile 写/读内存语义执行优化
+
+在实际执行时，只要不改变 volatile 写/读的内存语义，编译器可以根据实际情况省略不必要的屏障。举个例子，代码如下：
+
+```java
+class VolatileBarrierExample {
+    int a;
+    volatile int v1 = 1;
+    volatile int v2 = 2;
+    
+    void readAndWrite() {
+        int i = v1;  // 第一个 volatile 读
+        int j = v2;  // 第二个 volatile 读
+        a = i + j;   // 普通写
+        v1 = i = 1;  // 第一个 volatile 写
+        v2 = j * 2;  // 第二个 volatile 写
+    }
+}
+```
+
+针对 readAndWrite() 方法，编译器在生成字节码时可以做如下的优化。
+
+![image-20200203154902417](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200203154902417.png)
+
+- 省略 LoadStore 屏障：因为下面的普通写不会越过上面的 volatile 读，所以这两个 volatile 读之间可以省略 LoadLoad 屏障。
+- 省略 LoadLoad 屏障：因为下面没有读操作，只有一个普通写操作，所以可以省略 LoadStore 屏障。
+- 省略 StoreLoad 屏障：因为下面没有读操作，只有一个 volatile 写，所以可以省略 StoreLoad 屏障。
+- 不省略最后的 SotreLoad 屏障：因为编译器无法判断后面是否会有 volatile 读/写，为了安全起见，编译器通常会在这里插入一个 StoreLoad 屏障。
+
+上面的优化针对任意处理平台，由于不同的处理器有不同“松紧度”的处理器内存模型，内存屏障的插入还可以根据具体的处理器内存模型继续优化。如 X86 处理器，X86 处理器仅会对写-读操作重排序，不会对读-读、读-写、写-写操作做重排序，因此在 X86 处理器中除了最后的 StoreLoad 屏障外，其他的屏障都会省略。这也意味着，在 X86 处理器中，volatile 写的开销比 volatile 读的开销会大很多（因为执行 StoreLoad 屏障开销会比较大）。
+
+## 5.JSR-133 为什么要增强 volatile 的内存语义
+
+在 JSR-133 之前旧的 JMM 中，虽然不允许 volatile 变量之间重排序，但是允许 **volatile 变量和普通变量**之间重排序。因此在旧的 JMM 中，volatile 的写/读没有与锁的释放/获取具有相同的内存语义。为了提供一种**比锁更轻量级**的线程之间通信的机制，JSR-133 专家组决定增强 volatile 的内存语义：*严格限制编译器和处理器对 volatile 变量与普通变量之间的重排序，确保 volatile 的写/读和锁的释放/获取具有相同的内存语义*。
+
+由于 volatile 仅仅保证对单个 volatile 变量的读/写具有原子性，而锁的互斥执行的特性可以确保对整个临界区代码的执行具有原子性。在功能上，锁比 volatile 更强大；在可伸缩性和执行性能上，volatile 更有优势。 
+
+# 五、锁的内存语义
+
+## 1.锁的释放-获取建立的 happens-before 关系
+
+锁是并发中最重要的同步机制。锁除了让临界区互斥外，还可以让释放锁的线程向获取同一个锁的线程发送消息。锁的释放与获取的示例代码如下所示：
+
+```java
+class MonitorExample {
+    int a = 0;
+    
+    public synchronized void writer() {  // 1
+        a++;                             // 2
+    }                                    // 3
+    
+    public synchronized void reader() {  // 4
+        int i = a;                       // 5
+    }                                    // 6
+}
+```
+
+假设线程 A 先执行 writer() 方法，线程 B 后执行 reader() 方法，根据 happens-before 规则划分的 happens-before 关系如下：
+
+- 根据程序顺序规则：1 happens-before 2, 2 happens-before 3, 4 happens-before 5, 5 happens-before 6
+- 根据监视器锁规则：3 happens-before 4
+- 根据 happens-before 的传递性：2 happens-before 5
+
+上述关系如下图所示，黑色箭头表示程序顺序规则，红色箭头表示监视器锁规则，蓝色箭头表示这些规则的组合。线程 A 在释放锁之前所有可见的共享比变量，在线程 B 获取同一个锁之后，将立刻变得对线程 B 可见。
+
+![image-20200203172838024](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200203172838024.png)
+
+## 2.锁的释放和获取锁的内存语义
+
+- 当线程释放锁时，JMM 会把该线程对应的本地内存中的共享变量刷新到主内存中。
+- 当线程获取锁时，JMM 会把该线程对应的本地内存置为无效，从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。
+
+从中可以看出锁释放/获取与 volatile 写/读有相同的内存语义。总结如下：
+
+- 线程 A 释放一个锁，实质上是线程 A 向接下来将要获取这个锁的某个线程发出了消息（线程 A 对共享变量所做的修改）。
+- 线程 B 获取一个锁，实质上是线程 B 接收了之前某个线程发出的消息（在释放这个锁之前对共享变量所做的修改）。
+- 线程 A 释放锁，随后线程 B 获取该锁，该过程实质上是线程 A 通过主内存向线程 B 发送消息。
+
+## 3.锁内存语义的实现
+
+### ReentrantLock 可重入锁
+
+通过 ReentrantLock 源码分析锁内存语义的具体实现，示例代码如下所示：
+
+``` java
+public class ReentrantLockExample {
+
+    private int a = 0;
+    private ReentrantLock lock = new ReentrantLock();
+
+    public void writer() {
+        lock.lock();        // 获取锁
+        try {
+            a++;
+        } finally {
+            lock.unlock();  // 释放锁
+        }
+    }
+
+    public void reader() {
+        lock.lock();        // 获取锁
+        try {
+            int i = a;
+        } finally {
+            lock.unlock();  // 释放锁
+        }
+    }
+}
+```
+
+在 ReentrantLock 中，调用 lock() 方法获取锁，调用 unlock() 方法释放锁。ReentrantLock 的实现基于 AQS（AbstractQueuedSynchronizer），在 AQS 中使用一个 volatile 修饰的 state 变量来维护同步状态，该 volatile 变量是 ReentrantLock 内存语义实现的关键。
+
+ReentrantLock 的类图部分如下所示，ReentrantLock 分为公平锁和非公平锁。
+
+![image-20200203201947452](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200203201947452.png)
+
+### FairSync 公平锁
+
+公平锁加锁方法的调用轨迹为：
+
+- 1.ReentrantLock: lock() // 方法体中调用 FairSync 的 lock 方法
+- 2.FairSync: lock() // 方法体中调用 AbstractQueuedSynchronized 的 acquire 方法
+- 3.AbstractQueuedSynchronized: acquire(int arg) // 调用 tryAcquire 方法，FairSync 中重写了 tryAcquire 方法 
+- 4.FairSync: tryAcquire(int acquires)
+
+从第 4 步真正开始加锁，该方法的源码如下所示，从中可以看出加锁方法首先需要读取 volatile 变量 state。
+
+```java
+protected final boolean tryAcquire(int acquires) {
+    final Thread current = Thread.currentThread();
+    // 获取锁时，首先读取 volatile 变量 state 
+    if (c == 0) {
+        if (!hasQueuedPredecessors() &&
+            compareAndSetState(0, acquires)) {
+            setExclusiveOwnerThread(current);
+            return true;
+        }
+    }
+    else if (current == getExclusiveOwnerThread()) {
+        int nextc = c + acquires;
+        if (nextc < 0)
+            throw new Error("Maximum lock count exceeded");
+        setState(nextc);
+        return true;
+    }
+    return false;
+}
+```
+
+公平锁解锁方法的调用轨迹为：
+
+- 1.ReentrantLock: unlock() // 方法中调用 Sync 的 release 方法，也就是调用 Sync 父类 AbstractQueuedSynchronized 的 release(int arg) 方法。
+- 2.AbstractQueuedSynchronized: release(int arg) // 方法体中调用 tryRelease 方法，Sync 中重写了 tryRelease 方法
+- 3.Sync: tryRelease(int releases)
+
+从第 3 步真正开始解锁，该方法的源码如下所示，从中可以看出解锁方法最后需要写入 volatile 变量 state。
+
+```java
+protected final boolean tryRelease(int releases) {
+    int c = getState() - releases;
+    if (Thread.currentThread() != getExclusiveOwnerThread())
+        throw new IllegalMonitorStateException();
+    boolean free = false;
+    if (c == 0) {
+        free = true;
+        setExclusiveOwnerThread(null);
+    }
+    // 释放锁时，最后写入 volatile 变量 state
+    setState(c);
+    return free;
+}
+```
+
+公平锁在获取锁时首先读 volatile 变量 state，在释放锁时最后写 volatile 变量 state。根据 volatile 的 happens-before 规则，释放锁的线程在写 volatile 变量之前可见的共享变量，在获取锁的线程读取同一个 volatile 变量后将立即变得对获取锁的线程可见。
+
+### NonfairSync 非公平锁
+
+非公平锁的解锁与公平锁一样，非公平锁加锁方法的调用轨迹为：
+
+- 1.ReentrantLock: lock() // 方法体中调用 NonfairSync的 lock 方法
+- 2.NonfairSync: lock() // 方法体中调用 AbstractQueuedSynchronized  的 compareAndSetState 方法
+- 3.AbstractQueuedSynchronized: compareAndSetState(int expect, int update)
+
+从第 3 步真正开始加锁，该方法的源码如下所示，该方法采用原子操作（CAS）的方式更新 state 变量。
+
+```java
+protected final boolean compareAndSetState(int expect, int update) {
+    // See below for intrinsics setup to support this
+    return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+}
+```
+
+### compareAndSwapInt-CAS 原理
+
+JDK 文档对该方法的说明：如果当前状态值等于预期值，则以原子方法将同步状态设置为给定的更新值，该操作具有 volatile 读和写的内存语义。
+
+#### 编译器角度
+
+因为编译器不会对 volatile 读与 volatile 读后面的任意内存操作重排序以及编译器不会对 volatile 写与 volatile 写前面的任意操作重排序。结合这两个条件，可知为了同时实现 volatile 读和 volatile 写的内存语义，编译器不能对 CAS 与 CAS 前面和后面的任意内存操作重排序。
+
+#### 处理器角度
+
+从常见的 intel X86 处理器分析 CAS 是如何同时具有 volatile 读和 volatile 写内存语义的。
+
+sun.misc.Unsafe 类的 compareAndSwapInt 方法源码如下：
+
+```java
+public final native boolean compareAndSwapInt(Object o, long offset, int expected, int x);
+```
+
+该方法为 native 方法，在 openjdk 依次调用的 C++ 代码为：unsafe.cpp，atomic.cpp 和 atomic_windows_x86.inline.hpp。最终的实现在 [atomic_windows_x86.inline.hpp](http://hg.openjdk.java.net/jdk8/jdk8/hotspot/file/87ee5ee27509/src/os_cpu/windows_x86/vm/atomic_windows_x86.inline.hpp) 中，部分代码如下，[该段代码解析](https://www.zhihu.com/question/50878124/answer/123099923)。
+
+```c++
+#define LOCK_IF_MP(mp) __asm cmp mp, 0  \
+                       __asm je L0      \
+                       __asm _emit 0xF0 \ // 0xF0 是 lock 前缀
+                       __asm L0:
+
+inline jint     Atomic::cmpxchg    (jint     exchange_value, volatile jint*     dest, jint     compare_value) {
+  // alternative for InterlockedCompareExchange
+  // 根据返回的 mp 判断是否是多核处理器
+  int mp = os::is_MP();
+  __asm {
+    mov edx, dest
+    mov ecx, exchange_value
+    mov eax, compare_value
+    // 添加 lock 前缀
+    LOCK_IF_MP(mp)
+    cmpxchg dword ptr [edx], ecx
+  }
+}
+```
+
+根据上面的代码可知，程序会根据当前处理器的类型来决定是否为 cmpxchg 指令添加 lock 前缀。如果程序是在多处理器上运行，就为 cmpxchg 指令加上 lock 前缀（Lock Cmpxchg）。如果程序是在单处理器上运行，就省略 lock 前缀（但处理器自身会维护单处理器内的顺序一致性，不需要 lock 前缀提供的内存屏障效果）。
+
+intel 的手册对 lock 前缀的说明：
+
+- 确保对内存的读-改-写操作原子执行。在 Pentimu 及其之前的处理器中，带有 lock 前缀的指令在执行期间会**锁住总线**，使得其他处理器暂时无法通过总线访问内存，这会导致性能下降。从 Pentimu、Intel Xeon 及 P6 处理器开始，Intel 使用**缓存锁定（Cache Locking）**来保证指令执行的原子性。缓存锁定大大降低 lock 前缀指令的执行开销。
+- 禁止该指令，与之前和之后的读和写指令重排序。
+- 把写缓冲区中的所有数据刷新到内存中。
+
+第二点和第二点所具有的内存屏障效果足以同时实现 volatile 读和 volatile 写的内存语义。
+
+### 总结
+
+公平锁和非公平锁的内存语义总结：
+
+- 公平锁和非公平锁释放时，最后都要写一个 volatile 变量 state。
+- 公平锁获取时，首先会去读 volatile 变量。
+- 非公平锁获取时，首先通过 CAS 更新 volatile 变量，该操作同时具有 volatile 读和 volatile 写的内存语义。
+
+通过对 ReentrantLock 的分析，锁释放-获取的内存语义实现至少有以下两种：
+
+- 利用 volatile 变量的写-读所具有的内存语义。
+- 利用 CAS 所附带的 volatile 读和 volatile 写的内存语义。
+
+## 4.concurrent 包的实现
+
+由于 Java 的 CAS 同时具有 volatile 读和 volatile 写的内存语义，因此 Java 线程之间的通信有了以下四种方式：
+
+- 线程 A 写 volatile 变量，随后线程 B 读该 volatile 变量。
+- 线程 A 写 volatile 变量，随后线程 B 用 CAS 更新该 volatile 变量。
+- 线程 A 用 CAS 更新一个 volatile 变量，随后线程 B 用 CAS 更新这个 volatile 变量。
+- 线程 A 用 CAS 更新一个 volatile 变量，随后线程 B 读这个变量。
+
+Java 的 CAS 会采用现代处理器上提供的高效机器级别的原子指令，这些原子指令以原子方式对内存执行读-改-写操作，这是在多处理器中实现同步的关键。同时， volatile 变量的读/写和 CAS 可以实现线程之间的通信，结合这些特性，就构成了整个 J.U.C 包中的基石。一个通用化的实现模式如下：
+
+- 首先，声明共享变量为 volatile。
+- 然后，使用 CAS 的原子条件更新来实现线程之间的同步。
+- 同时，配合以 volatile 的读/写和 CAS 所具有的 volatile 读和写的内存语义来实现线程之间的通信。
+
+AQS、非阻塞数据结构和原子变量类（java.util.concurrent.atomic 包中的类）这些 J.U.C 包中的基础类都是采用这种模式实现的，而 J.U.C 包中的高层类又是依赖于这些基础类实现的，整体的 J.U.C 包实现示意图如下所示：
+
+![image-20200204010336263](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200204010336263.png)
+
+# 六、final 域的内存语义
+
+## 1.final 域的重排序规则
+
+编译器和处理器要遵循 final 域的两个重排序规则：
+
+- 在构造函数内对一个 final 域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。
+- 初次读一个包含 final 域的对象的引用，与随后初次读这个 final 域，这两个操作之间不能重排序。
+
+示例代码如下：
+
+```java
+public class FinalExample {
+
+    int i;
+    final int j;
+    static FinalExample obj;
+
+    public FinalExample() {        // 构造函数
+        i = 1;                     // 写普通域
+        j = 6;                     // 写 final 域
+    }
+
+    public static void writer() {  // 写线程 A 执行
+        obj = new FinalExample();
+    }
+
+    public static void reader() {         // 读线程 B 执行
+        FinalExample finalExample = obj;  // 读对象引用
+        int a = finalExample.i;           // 读普通域
+        int b = finalExample.j;           // 读 final 域
+    }
+}
+```
+
+假设线程 A 执行 writer() 方法，线程 B 执行 reader() 方法，具体的分析见下面。
+
+## 2.写 final 域的重排序规则
+
+写 final 域的重排序规则禁止把 final 域的写重排序到构造函数之外，包含 2 个方面：
+
+- JMM 禁止编译器把 final 域的写重排序到构造函数之外。
+- 编译器会在 final 域之后，构造函数之前插入 StoreStore 屏障。
+
+writer() 方法包含两个步骤：
+
+- 1.构造一个 FinalExample 示例对象
+- 2.将该对象的引用赋给引用变量 obj
+
+假设线程 B 读对象引用与读对象的成员域之间无重排序，一种可能的执行顺序如图所示。
+
+![image-20200204020226704](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200204020226704.png)
+
+在上图中，写普通域的操作被编译器重排序到了构造函数之外，导致线程 B 读取变量 i 的值为初始化之前的值。而写 final 域的操作被禁止重排序到构造函数外，所以线程 B 可以读取到正确的 final 变量值。
+
+写 final 域的重排序规则可以保证：在对象引用为任意线程可见之前，对象的 final 域已经被被正确初始化了，而普通域无法保证被初始化。
+
+## 3.读 final 域的重排序规则
+
+读 final 域的重排序规则：在一个线程中，初次读对象引用与初次读该对象包含的 final 域，JMM **禁止处理器**重排序这两个操作。编译器会在读 final 域操作的前面插入一个 LoadLoad 屏障。
+
+初次读对象引用与初次读该对象包含的 final 域，这两个操作存在间接依赖关系，编译器会遵守该依赖关系，但是有少数处理器（如 alpha 处理器）不遵守该关系，允许对存在间接依赖关系的操作做重排序，该规则就是专门针对这种处理器的。
+
+reader() 方法包含三个步骤：
+
+- 1.初次读引用变量 obj
+- 2.初次读引用变量 obj 指向对象的普通域 i
+- 3.初次读引用变量 obj 指向对象的 final 域 j
+
+假设线程 A 无重排序发生，同时程序在不遵守间接依赖关系的处理器上执行，一种可能的执行顺序如图所示。
+
+![image-20200204022029592](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200204022029592.png)
+
+在上图中，读对象普通域的操作被处理器重排序到读对象引用之前。导致在读该对象的普通域时该对象还没被写线程 A 写入，发生错误操作。而 final 域的重排序规则会保证其正确执行。
+
+读 final 域的重排序规则可以保证：在读一个对象的 final 域之前，一定会先读包含这个 final 域的对象的引用。
+
+## 4.final 域为引用类型
+
+final 域为引用类型时，写 final 域的重排序规则对编译器和处理器增加了如下约束：在构造函数内对一个 final 引用的对象的成员域的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。
+
+## 5.为什么 final 引用不能从构造函数内“溢出”
+
+之前说了写 final 域的重排序规则可以保证：在引用变量为任意线程可见之前，该引用变量指向的对象的 final 域已经在构造函数中被初始化过了。但是，我们还得保证在执行构造函数的时候，不能让引用发生“逸出”。
+
+示例代码如下：
+
+```java
+public class FinalReferenceEscapeExample {
+
+    final int i;
+    static FinalReferenceEscapeExample obj;
+
+    public FinalReferenceEscapeExample() {
+        i = 2;                    // 1 写 final 域
+        obj = this;               // 2 this 引用在此逸出
+    }
+
+    public static void writer() {
+        new FinalReferenceEscapeExample();
+    }
+
+    public static void reader() {
+        if (obj != null) {        // 3
+            int j = obj.i;        // 4
+        }
+    }
+}
+```
+
+假设线程 A 执行 writer() 方法，线程 B 执行 reader() 方法。一种执行情况如下图所示。操作2“逸出”，使得对象未构造完成就为线程 B 可见。虽然操作2在操作1后面，但是这两个操作可能会发生重排序。
+
+![image-20200204142246369](C:\Users\hncboy\AppData\Roaming\Typora\typora-user-images\image-20200204142246369.png)
+
+
+
+从上图可以看出：在构造函数返回前，被构造对象的引用不能为其他线程所见，因为此时的 final 域可能还没有被初始化。在构造函数返回后，任意线程都将保证能看到 final 域正确初始化后的值。
+
+## 6.final 语义在处理器中的实现
+
+以 X86 处理器为例，上面我们了解到：
+
+- 写 final 域的重排序会要求编译器在 final 域的写之后，构造函数的 return 之前插入一个 StoreStore 屏障。
+- 读 final 域的重排序会要求编译器在 final 域的读之前插入一个 LoadLoad 屏障。
+
+由于 X86 处理器不会对写-写以及读-读做重排序，因为在 X86 处理器中，final 域的读/写不会插入任何内存屏障。
+
+## 7.JSR-133 为什么要增强 final 的语义
+
+在旧的 JMM 中，final 域的值可能会改变，如一个线程读取到 final 域未初始化前的值为 0，后来再次读取该 final 域的值变为初始化之后的，最常见的例子就是在旧的 JMM 中，String 的值可能会变。
+
+因此为了弥补该漏洞，JSR-133 专家组为 final 域增加了写和读的重排序规则，只要被构造对象的引用在构造函数中没有“逸出”，那么不适用同步就可以保证任意线程都能看到该 final 域在构造函数中被初始化后的值。
+
+# 七、happens-before
+
+## 1.JMM 的设计
+
+## 2.happens-before 的定义
+
+## 3.happens-before 规则
+
+
+
+# 八、双重检查锁与延迟初始化
+
+# 九、Java 内存模型综述
+
+# 十、本章小结
 
 
 
