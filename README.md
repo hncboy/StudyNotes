@@ -18,6 +18,7 @@
 - [线程的状态与属性](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的状态与属性.md)
 - [线程间通信 wait/notify](https://github.com/hncboy/StudyNotes/blob/master/Java/%E5%B9%B6%E5%8F%91-%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%20wait%20notify.md)
 - [Thead 类的常用方法](https://github.com/hncboy/StudyNotes/blob/master/Java/%E5%B9%B6%E5%8F%91-Thead%20%E7%B1%BB%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.md)
+- [线程的安全性分析](https://github.com/hncboy/StudyNotes/blob/master/Java/并发-线程的安全性问题.md)
 
 ##  :pencil:算法
 
@@ -49,11 +50,11 @@
 - [第3章 Java 内存模型](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC3%E7%AB%A0%20Java%20%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md)
 - [第4章 Java 并发编程基础](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/%E7%AC%AC4%E7%AB%A0%20Java%20%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.md)
 
-### 《Java并发编程的艺术》
+### 《Java并发编程实战》
 
 - [第1章 简介](https://github.com/hncboy/StudyNotes/blob/master/book/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AE%9E%E6%88%98/%E7%AC%AC1%E7%AB%A0%20%E7%AE%80%E4%BB%8B.md)
 
-### 《深入理解 Java 虚拟机》
+### 《深入理解 Java 虚拟机 第三版》
 
 - [第1章  走近 Java](https://github.com/hncboy/StudyNotes/blob/master/book/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%20Java%20%E8%99%9A%E6%8B%9F%E6%9C%BA/%E7%AC%AC1%E7%AB%A0%20%20%E8%B5%B0%E8%BF%91%20Java.md)
 

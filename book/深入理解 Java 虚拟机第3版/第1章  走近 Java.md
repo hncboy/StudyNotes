@@ -23,7 +23,6 @@ JRE 7 提供了库，Java虚拟机（JVM）和其他组件，以运行用Java编
     <img src="pics/chapter01/82b99065-39eb-4fb1-a899-44492ab21baf.png" />
 </div>
 <div align = "center"> 图 1-1 </div><br>
-
 按照技术所服务的领域可划分为：
 - Java Card：支持一些 Java 小程序（Applets）运行在小内存设备上的平台。
 - Java ME（Micro Edition）：支持 Java 程序运行在移动终端（手机、PDA）上的平台。
