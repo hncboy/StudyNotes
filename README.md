@@ -62,7 +62,6 @@
 
 <div align = "center">  
     <img width="300px" src="https://img-blog.csdnimg.cn/20191207202931447.png" />
-    <img width="300px" src="https://img-blog.csdnimg.cn/20191207202803883.jpg" />
 </div>
 
 
