@@ -314,7 +314,7 @@ Do something with Java Thread AnyWhere
 # 5.线程的层次关系
 Java 平台中线程不是孤立的，线程 A 执行的代码创建了线程 B，那么，可以称线程 B 为线程 A 的子线程。子线程所执行的代码也可以创建其他子线程，父线程、子线程只是一个相对的称呼。这种父子关系称为线程的层次关系，如图 1 所示：
 <div align = "center">  
-    <img src="pics/chapter01/ab9def94-c852-45cf-b617-c6bd4a567e0e.png" />
+    <img src="/docs/pics/ab9def94-c852-45cf-b617-c6bd4a567e0e.png" />
 </div>
 <div align = "center"> 图 1 </div><br>
 - 默认情况下父线程是守护线程，则子线程也是守护线程；父线程是用户线程，则子线程也是用户线程。

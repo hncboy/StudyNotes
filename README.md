@@ -24,13 +24,17 @@
 
 ### 《Java并发编程实战》
 
-### 《深入理解 Java 虚拟机 第三版》
+### 《深入理解 Java 虚拟机 第3版》
 
-
+## :honey_pot: 学习网站
 
 <div align = "center">  
-    <img width="300px" src="https://img-blog.csdnimg.cn/20191207202931447.png" />
+    <img width="300px" src="https://img-blog.csdnimg.cn/20191021125444178.jpg" />
+    <div><strong>灿烂一生</strong></div>
+    <div>微信扫描二维码，关注我的公众号</div>
 </div>
+
+
 
 
 

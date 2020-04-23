@@ -20,7 +20,7 @@ JDK 7 是 JRE 7 的超集，包含了 JRE 7 的所有内容，以及小程序和
 JRE 7 提供了库，Java虚拟机（JVM）和其他组件，以运行用Java编程语言编写的小程序和应用程序。
 
 <div align = "center">  
-    <img src="pics/chapter01/82b99065-39eb-4fb1-a899-44492ab21baf.png" />
+    <img src="/docs/pics/82b99065-39eb-4fb1-a899-44492ab21baf.png" />
 </div>
 <div align = "center"> 图 1-1 </div><br>
 按照技术所服务的领域可划分为：

@@ -1,4 +1,4 @@
-##  ☕Java
+## ☕Java
 
 ### Java 基础
 
@@ -23,6 +23,7 @@
 ## 📝算法
 
 ### LeetCode
+
 - [算法](/docs/Algorithm&DataStructure/LeetCode?id=算法)
 - [数据库](/docs/Algorithm&DataStructure/LeetCode?id=数据库)
 - [Shell](/docs/Algorithm&DataStructure/LeetCode?id=Shell)
@@ -59,11 +60,22 @@
 
 - [第1章 简介](/docs/book/Java并发编程实战/第1章%20简介.md)
 
-### 《深入理解 Java 虚拟机 第三版》
+### 《深入理解 Java 虚拟机 第3版》
 
 - [第1章  走近 Java](/docs/book/深入理解%20Java%20虚拟机第3版/第1章%20%20走近%20Java.md)
 
+## :honey_pot: 资源
+
+- [JavaGuide](https://snailclimb.gitee.io/javaguide/#/)
+- [CS-notes](https://cyc2018.github.io/CS-Notes/#/)
+- [CoDeleven](https://www.yuque.com/codeleven)
+- [深入浅出多线程](http://concurrent.redspider.group/RedSpider.html)
+- [Java 编程思想 第5版](https://lingcoder.github.io/OnJava8/#/)
+- [labuladong的算法小抄](https://labuladong.gitbook.io/algo/)
+- [GitHub中文排行榜](https://github.com/kon9chunkit/GitHub-Chinese-Top-Charts)
 
 <div align = "center">  
-    <img width="300px" src="https://img-blog.csdnimg.cn/20191207202931447.png" />
+    <img width="300px" src="https://img-blog.csdnimg.cn/20191021125444178.jpg" />
+    <div><strong>灿烂一生</strong></div>
+    <div>微信扫描二维码，关注我的公众号</div>
 </div>
