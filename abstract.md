@@ -64,7 +64,7 @@
 
 - [第1章  走近 Java](/docs/book/深入理解%20Java%20虚拟机第3版/第1章%20%20走近%20Java.md)
 
-## :honey_pot: 资源
+## 🍯资源
 
 - [JavaGuide](https://snailclimb.gitee.io/javaguide/#/)
 - [CS-notes](https://cyc2018.github.io/CS-Notes/#/)

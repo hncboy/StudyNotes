@@ -26,7 +26,7 @@
 
 ### 《深入理解 Java 虚拟机 第3版》
 
-## :honey_pot: 学习网站
+## 🍯资源
 
 <div align = "center">  
     <img width="300px" src="https://img-blog.csdnimg.cn/20191021125444178.jpg" />
