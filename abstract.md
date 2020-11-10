@@ -68,12 +68,12 @@
 
 - [JavaGuide](https://snailclimb.gitee.io/javaguide/#/)
 - [CS-notes](https://cyc2018.github.io/CS-Notes/#/)
-- [CoDeleven](https://www.yuque.com/codeleven)
+- [CoDeleven 语雀](https://www.yuque.com/codeleven)
 - [深入浅出多线程](http://concurrent.redspider.group/RedSpider.html)
 - [Java 编程思想 第5版](https://lingcoder.github.io/OnJava8/#/)
 - [labuladong的算法小抄](https://labuladong.gitbook.io/algo/)
 - [GitHub中文排行榜](https://github.com/kon9chunkit/GitHub-Chinese-Top-Charts)
-- [阿里巴巴 Java 开发手册](https://github.com/hncboy/StudyNotes/blob/master/docs/files/阿里巴巴Java开发手册（泰山版）.pdf)
+- [Java 开发手册](https://github.com/alibaba/p3c)
 
 <div align = "center">  
     <img width="300px" src="https://img-blog.csdnimg.cn/20191021125444178.jpg" />
