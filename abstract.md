@@ -18,7 +18,8 @@
 - [线程的状态与属性](/docs/Java/multithread/线程的状态与属性.md)
 - [线程间通信 wait/notify](/docs/Java/multithread/线程间通信%20wait%20notify.md)
 - [Thead 类的常用方法](/docs/Java/multithread/Thead%20类的常用方法.md)
-- [线程的安全性分析](/docs/Java/multithread/线程的安全性问题.md)
+- [线程的安全性问题](/docs/Java/multithread/线程的安全性问题.md)
+- [线程的活跃性问题](/docs/Java/multithread/线程的活跃性问题.md)
 
 ## 📝算法
 
