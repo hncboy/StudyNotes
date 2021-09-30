@@ -30,7 +30,7 @@
 - [Shell](/docs/Algorithm&DataStructure/LeetCode?id=Shell)
 - [多线程](/docs/Algorithm&DataStructure/LeetCode?id=多线程)
 - [程序员面试金典](/docs/Algorithm&DataStructure/LeetCode?id=程序员面试金典)
-- [剑指 Offer](/docs/Algorithm&DataStructure/LeetCode?id=剑指-offer)
+- [剑指 Offer（第 2 版）](/docs/Algorithm&DataStructure/LeetCode?id=剑指-offer第-2-版)
 
 ## 📚Book
 
