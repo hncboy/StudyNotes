@@ -1,4 +1,4 @@
-## :pencil:算法
+## 算法
 
 | 序号 | 题名 | 难度 |
 | -- | -- | -- |
@@ -406,14 +406,14 @@
 | 1362 | [最接近的因数](https://github.com/hncboy/LeetCode/blob/master/src/com/hncboy/ClosestDivisors.java) | 中等 |
 | 1588 | [所有奇数长度子数组的和](https://github.com/hncboy/LeetCode/blob/master/src/com/hncboy/SumOfAllOddLengthSubarrays.java) | 简单 |
 
-## :currency_exchange:多线程
+## 多线程
 
 | 序号                                                         | 题名                                                         | 难度 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
 | [1114](https://leetcode-cn.com/problems/print-in-order/)     | [按序打印](https://github.com/hncboy/LeetCode/blob/master/src/com/hncboy/multithread/PrintInOrder.java) | 简单 |
 | [1115](https://leetcode-cn.com/problems/print-foobar-alternately/) | [交替打印FooBar](https://github.com/hncboy/LeetCode/blob/master/src/com/hncboy/multithread/PrintFoobarAlternately.java) | 中等 |
 
-## :hot_pepper:程序员面试金典
+## 程序员面试金典
 
 | 序号                                                         | 题名                                                         | 难度 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
@@ -422,7 +422,7 @@
 | [面试题 10.01](https://leetcode-cn.com/problems/sorted-merge-lcci/) | [合并排序的数组](https://github.com/hncboy/LeetCode/blob/master/src/com/hncboy/lcci/SortedMergeLcci.java) | 简单 |
 | [面试题 17.16](https://leetcode-cn.com/problems/the-masseuse-lcci/) | [按摩师](https://github.com/hncboy/LeetCode/blob/master/src/com/hncboy/lcci/TheMasseuseLcci.java) | 简单 |
 
-## :fountain_pen:剑指 Offer（第 2 版）
+## 剑指 Offer（第 2 版）
 
 | 序号                                                         | 题名                                                         | 难度 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
